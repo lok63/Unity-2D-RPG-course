@@ -17,7 +17,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     [Header("Collision Details")]
     [SerializeField] private float groundCheckDistance;
     [SerializeField] private bool isGrounded;
-    private LayerMask whatIsGround;
+    [SerializeField] private LayerMask whatIsGround = 1 << 6; // this is layer 6 which is Ground
 
     
     private void Awake()
@@ -38,8 +38,9 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
     private void HandleAnimations()
     {
-        bool isMoving = rb.linearVelocity.x != 0;
-        anim.SetBool("isMoving", isMoving);
+        anim.SetFloat("xVelocity", rb.linearVelocity.x);
+        anim.SetFloat("yVelocity", rb.linearVelocity.y);
+        anim.SetBool("isGrounded", isGrounded);
     }
 
     private void HandleInput()

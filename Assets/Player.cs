@@ -1,18 +1,49 @@
+using System;
 using UnityEngine;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
-    public string playerName = "Bob the hero";
-    public int age = 25;
-    public float moveSpeed = 2.5f;
-    public bool gameOver = true;
-    
-    public Rigidbody2D rb;
-    
-    // Update is called once per frame
-    void Update()
-    {
+    private Animator anim;
+    private Rigidbody2D rb;
+    [SerializeField] private float moveSpeed =5f;
+    [SerializeField] private float jumbForce =17;
+    private float xInput;
 
-        
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<Animator>();
     }
+
+    // Update is called once per frame
+    private void Update()
+    {   
+        HandleInput();
+        HandleMovement();
+        HandleAnimations();
+    }
+
+    private void HandleAnimations()
+    {
+        bool isMoving = rb.linearVelocity.x != 0;
+        anim.SetBool("isMoving", isMoving);
+    }
+
+    private void HandleInput()
+    {
+        xInput = Input.GetAxis("Horizontal");
+        if (Input.GetKeyDown(KeyCode.Space))
+            Jump();
+    }
+
+    private void HandleMovement()
+    {
+        rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+    }
+    
+    private void Jump()
+    {
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumbForce);
+    }
+    
 }

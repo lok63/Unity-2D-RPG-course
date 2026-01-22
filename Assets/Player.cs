@@ -8,7 +8,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     [SerializeField] private float moveSpeed =5f;
     [SerializeField] private float jumbForce =17;
     private float xInput;
-
+    private bool isFacingRight = true;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -21,6 +21,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
         HandleInput();
         HandleMovement();
         HandleAnimations();
+        HandleFlip();
     }
 
     private void HandleAnimations()
@@ -39,6 +40,19 @@ public class NewMonoBehaviourScript : MonoBehaviour
     private void HandleMovement()
     {
         rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+    }
+
+    private void HandleFlip()
+    {
+        if (rb.linearVelocity.x > 0f && isFacingRight == false)
+            Flip();
+        else if (rb.linearVelocity.x < 0f && isFacingRight == true)
+            Flip();
+    }
+    private void Flip()
+    {
+        transform.Rotate(0, 180, 0);
+        isFacingRight = !isFacingRight;
     }
     
     private void Jump()

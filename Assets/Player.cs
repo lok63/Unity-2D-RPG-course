@@ -2,17 +2,20 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class Player : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D rb;
     private float xInput;
     private bool isFacingRight = true;
-
+    
+    private bool canMove = true;
+    private bool canJump = true;
 
     [Header("Movement Details")]
     [SerializeField] private float moveSpeed =5f;
     [SerializeField] private float jumbForce =17;
+
     
     [Header("Collision Details")]
     [SerializeField] private float groundCheckDistance;
@@ -36,6 +39,12 @@ public class NewMonoBehaviourScript : MonoBehaviour
         HandleFlip();
     }
 
+    public void EnableMovementAndJump(bool enable)
+    {
+        canMove = enable;
+        canJump = enable;
+    }
+
     private void HandleAnimations()
     {
         anim.SetFloat("xVelocity", rb.linearVelocity.x);
@@ -47,12 +56,26 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         xInput = Input.GetAxis("Horizontal");
         if (Input.GetKeyDown(KeyCode.Space))
-            Jump();
+            TryToJump();
+        
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+            TryToAttack();
     }
 
+    private void TryToAttack()
+    {
+        if(isGrounded)
+            anim.SetTrigger("attack");
+    }
     private void HandleMovement()
     {
-        rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+        if (canMove)
+            rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+        else
+            // we attacking we are setting in the frame canMove to False
+            // disable movement while attacking by setting velocity to 0
+            // by setting velocityX to 0 we make sure the animator won't trigger the movement condition
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
     private void HandleFlip()
@@ -68,11 +91,11 @@ public class NewMonoBehaviourScript : MonoBehaviour
         isFacingRight = !isFacingRight;
     }
     
-    private void Jump()
+    private void TryToJump()
     {
         // jump only if the character is on the ground
         // this avoids infinite jumps
-        if (isGrounded)
+        if (isGrounded && canJump)
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumbForce);
     }
 

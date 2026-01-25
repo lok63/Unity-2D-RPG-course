@@ -50,7 +50,9 @@ public class Player : MonoBehaviour
         Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, whatIsEnemy);
         foreach (Collider2D enemy in enemyColliders)
         {
-            enemy.GetComponent<Enemy>().TakeDamage();
+            Enemy enemyScript = enemy.GetComponent<Enemy>();
+            enemyScript.TakeDamage();
+            Debug.Log("I damaged enemy: " + enemyScript.enemyName);
         }
     }
     public void EnableMovementAndJump(bool enable)
